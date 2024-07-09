@@ -1,0 +1,19 @@
+.container {
+
+}
+
+.message {
+  border: 2px solid #fff;
+  font-size: 1rem;
+  padding: 16px;
+  line-height: normal;
+  color: #292c32;
+  border: 2px dashed #0530F7;
+  border-radius: 12px;
+}
+
+.user {
+  /* background: #FA8A08; */
+  border: 2px solid #FA8A08;
+  font-style: italic;
+}

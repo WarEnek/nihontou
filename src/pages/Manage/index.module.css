@@ -1,0 +1,225 @@
+.container {
+  background: #fff6e9;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 80px auto;
+  height: 100vh;
+  /* grid-template-areas:
+    'header'
+    'sidebar content'; */
+}
+
+header {
+  display: flex;
+}
+
+.logo {
+  background: transparent url('../../assets/logo.svg') no-repeat;
+  width: 150px;
+  height: 50px;
+  background-size: contain;
+  background-position: center;
+}
+
+.btnCreatePrompt {
+  background: #fff;
+  border-radius: 6px;
+  color: #292c32;
+}
+
+.modal h2 {
+  font-size: 1.2rem;
+  font-weight: normal;
+}
+
+.formContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.formRow {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  label {
+    font-size: 1rem;
+  }
+
+  input,
+  textarea {
+    background: #fff;
+    border: 1px solid #292c32;
+    border-radius: 6px;
+    padding: 6px 12px;
+    color: #292c32;
+    font-size: 1rem;
+    resize: vertical;
+    transition: 0.1s all;
+
+    &:focus {
+      outline: 3px solid #f7bb05;
+      border-color: #f7bb05;
+    }
+  }
+}
+
+.btn {
+  font-size: 1.1rem;
+  border-radius: 6px;
+  padding: 6px 8px;
+  font-weight: normal;
+
+  &:hover,
+  &:focus {
+    outline: none;
+  }
+}
+
+.btnClose {
+  background: #fff;
+  border: 1px solid #292c32;
+  color: #292c32;
+}
+
+.btnCreate {
+  background: #ff7f3e;
+}
+
+.btnDelete {
+  background: red;
+}
+
+.notification {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+}
+
+.contentWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  max-width: 600px;
+  background: #fff;
+  border-radius: 6px;
+  color: #292c32;
+  padding: 24px 36px;
+  position: relative;
+
+  h2 {
+    font-weight: normal;
+    all: unset;
+    font-size: 1.6rem;
+    margin-bottom: 1rem;
+  }
+  ul {
+    all: unset;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+
+  &:after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    right: -110px;
+    background: transparent url('../../assets/shiba-point.svg') no-repeat;
+    width: 100px;
+    height: 100px;
+    background-size: contain;
+    background-position: center;
+  }
+}
+
+.listItem {
+  all: unset;
+  display: flex;
+  position: relative;
+
+  &:hover .listActions {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.listActions {
+  flex-shrink: 0;
+  display: flex;
+  gap: 12px;
+  position: absolute;
+  right: 0;
+  transform: translateX(100px);
+  opacity: 0;
+  transition: 0.2s all;
+}
+
+.formActions {
+  display: flex;
+  gap: 64px;
+
+  button {
+    flex: 1;
+  }
+}
+
+.listItemContent {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  strong {
+    font-weight: 600;
+  }
+  p {
+    all: unset;
+    white-space: nowrap;
+    width: 100%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+}
+
+.icon {
+  all: unset;
+  background: transparent;
+  color: #292c32;
+  cursor: pointer;
+
+  svg {
+    width: 26px;
+    height: 26px;
+  }
+}
+
+.deleteIcon {
+  fill: red;
+}
+
+.listHeader {
+  display: flex;
+  justify-content: space-between;
+}
+
+.btnCreatePrompt {
+  all: unset;
+
+  svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  &:hover {
+    svg {
+      transfom: scale(1.1);
+    }
+  }
+}

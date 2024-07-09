@@ -1,0 +1,24 @@
+.container {
+  ul {
+    all: unset;
+    display: flex;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    
+    li {
+      all: unset;
+      padding: 8px;
+      width: 100%;
+      cursor: pointer;
+      transition: .2s all;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+
+      &:hover {
+        background: #FFF6E9;
+      }
+    }
+  }
+}

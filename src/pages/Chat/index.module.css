@@ -1,0 +1,115 @@
+.container {
+  background: #fff6e9;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 80px auto;
+  height: 100vh;
+  /* grid-template-areas:
+    'header'
+    'sidebar content'; */
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1225px;
+  margin: auto;
+  width: 100%;
+}
+
+.sidebar {
+  /* grid-area: sidebar; */
+  background-color: #0530f7;
+  width: 250px;
+  overflow-y: auto;
+  max-height: 100vh;
+}
+.messagesWrapper {
+  width: 100%;
+  display: grid;
+  grid-template-rows: auto 65px;
+}
+.messages {
+  /* grid-area: content; */
+  max-width: 600px;
+  margin: auto;
+  gap: 16px;
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 48px - 25px);
+  overflow-y: scroll;
+  padding: 24px 0;
+  scrollbar-color: hsl(0deg 0% 40.39% / 43.14%) #fff;
+}
+.textareaWrapper {
+}
+.chatContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.btn {
+  background: #fff;
+  transition: 0.2s all;
+  color: #292c32;
+  border-radius: 0;
+  max-height: 200px;
+  height: 50vh;
+  outline: 0;
+  border: 0;
+
+  &:hover {
+    background: #604cc3;
+    outline: 0;
+    border: 0;
+    color: #fff;
+  }
+
+  .shiba {
+    background: transparent url('../../assets/shiba-with-nihontou.svg')
+      no-repeat;
+    width: 100px;
+    height: 100px;
+    background-size: contain;
+    transition: 0.5s all;
+  }
+
+  &.isLoading {
+    .shiba {
+      animation: dogJump 0.3s ease-in-out infinite alternate;
+    }
+  }
+}
+
+@keyframes dogJump {
+  0% {
+    transform: translateY(0) scaleX(-1);
+  }
+  100% {
+    transform: translateY(-5px) scaleX(-1);
+  }
+}
+
+.select {
+  width: 200px;
+  background: #fff;
+  border-radius: 6px;
+  color: #292c32;
+  display: flex;
+  padding: 12px;
+
+  &:focus {
+    outline: 0;
+  }
+}
+
+.logo {
+  background: transparent url('../../assets/logo.svg') no-repeat;
+  width: 150px;
+  height: 50px;
+  background-size: contain;
+  background-position: center;
+}
