@@ -3,10 +3,15 @@ import clsx from "clsx";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import PromptField from "../../components/PromptField";
-import $ from "./index.module.css";
 import { apiService } from "../../api";
+import {
+	IconLogout,
+	IconLanguageHiragana,
+	IconAdjustmentsHorizontal,
+} from "@tabler/icons-react";
+import $ from "./index.module.css";
 
-const Chat = () => {
+const Translate = () => {
 	const [loading, setLoading] = useState(false);
 	const [inputText, setInputText] = useState("");
 	const [outputText, setOutputText] = useState("");
@@ -64,11 +69,23 @@ const Chat = () => {
 		<MantineProvider>
 			<div className={$.container}>
 				<header>
-					<div className={$.logo} />
+					<a className={$.logo} href="/" />
 					<div className={$.middle}>
 						<nav className={$.nav}>
-							<a href="/chat">Chat</a>
-							<a href="/manage">Manage</a>
+							<a href="/translate">
+								Translate{" "}
+								<IconLanguageHiragana
+									style={{ width: "18px" }}
+									className={$.headIcon}
+								/>
+							</a>
+							<a href="/manage">
+								Manage{" "}
+								<IconAdjustmentsHorizontal
+									style={{ width: "18px" }}
+									className={$.headIcon}
+								/>
+							</a>
 						</nav>
 						{prompts.length !== 0 && (
 							<Select
@@ -85,7 +102,7 @@ const Chat = () => {
 						)}
 					</div>
 					<button type="button" onClick={handleSignOut} className={$.btnHeader}>
-						Sign out
+						Sign out <IconLogout style={{ width: "18px" }} />
 					</button>
 				</header>
 				<div className={$.chatContainer}>
@@ -99,7 +116,7 @@ const Chat = () => {
 						type="submit"
 						className={clsx($.btn, loading && $.isLoading)}
 						onClick={process}
-						disabled={loading}
+						disabled={loading || inputText.length === 0}
 					>
 						<span className={$.textInBtn}>Translate</span>
 						<div className={$.shiba} />
@@ -111,4 +128,4 @@ const Chat = () => {
 	);
 };
 
-export default Chat;
+export default Translate;

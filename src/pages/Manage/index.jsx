@@ -6,7 +6,13 @@ import { Modal, ScrollArea, Notification, Tooltip } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
 import EditIcon from "../../assets/edit.svg?react";
 import DeleteIcon from "../../assets/delete.svg?react";
-import PlusIcon from "../../assets/plus.svg?react";
+import {
+	IconLogout,
+	IconLanguageHiragana,
+	IconAdjustmentsHorizontal,
+	IconSquareRoundedPlus,
+	IconUserPlus,
+} from "@tabler/icons-react";
 import { apiService } from "../../api"; // Импортируем apiService
 
 import "@mantine/core/styles.css";
@@ -15,9 +21,17 @@ import $ from "./index.module.css";
 const Manage = () => {
 	const [newPrompt, setNewPrompt] = useState({ title: "", content: "" });
 	const [prompts, setPrompts] = useState([]);
+	const [users, setUsers] = useState([]);
 	const [loading, setLoading] = useState(true); // Add loading state
 	const [error, setError] = useState(null); // Add error state
-
+	const [userModalOpened, { open: openUserModal, close: closeUserModal }] =
+		useDisclosure(false);
+	const [newUser, setNewUser] = useState({
+		username: "",
+		password: "",
+		firstName: "",
+		lastName: "",
+	});
 	const [editingPrompt, setEditingPrompt] = useState(null);
 	const [deletingPromptId, setDeletingPromptId] = useState(null);
 
@@ -31,10 +45,14 @@ const Manage = () => {
 		useDisclosure(false);
 	const [notificationDeleteIsOpened, notificationDeleteHandlers] =
 		useDisclosure(false);
+	const [userNotificationIsOpened, userNotificationHandlers] =
+		useDisclosure(false);
+
 	const navigate = useNavigate();
 
 	useEffect(() => {
 		fetchPrompts();
+		fetchUsers();
 	}, []);
 
 	const fetchPrompts = async () => {
@@ -48,6 +66,15 @@ const Manage = () => {
 			setError("Failed to fetch prompts");
 		} finally {
 			setLoading(false);
+		}
+	};
+
+	const fetchUsers = async () => {
+		try {
+			const fetchedUsers = await apiService.getAllUsers();
+			setUsers(fetchedUsers);
+		} catch (error) {
+			console.error("Failed to fetch users:", error);
 		}
 	};
 
@@ -137,19 +164,50 @@ const Manage = () => {
 		navigate("/login");
 	};
 
+	const handleUserSubmit = async (e) => {
+		e.preventDefault();
+		try {
+			await apiService.register(newUser);
+			closeUserModal();
+			fetchUsers(); // Refresh the user list
+			setNewUser({
+				username: "",
+				password: "",
+				firstName: "",
+				lastName: "",
+			});
+			notificationHandlers.open(); // You can create a separate notification for user creation if needed
+		} catch (error) {
+			console.error("Failed to create user:", error);
+			// Handle error (e.g., show error notification)
+		}
+	};
+
 	return (
 		<MantineProvider>
 			<div className={$.container}>
 				<header>
-					<div className={$.logo} />
+					<a className={$.logo} href="/" />
 					<div className={$.middle}>
 						<nav className={$.nav}>
-							<a href="/chat">Chat</a>
-							<a href="/manage">Manage</a>
+							<a href="/translate">
+								Translate{" "}
+								<IconLanguageHiragana
+									style={{ width: "18px" }}
+									className={$.headIcon}
+								/>
+							</a>
+							<a href="/manage">
+								Manage{" "}
+								<IconAdjustmentsHorizontal
+									style={{ width: "18px" }}
+									className={$.headIcon}
+								/>
+							</a>
 						</nav>
 					</div>
 					<button type="button" onClick={handleSignOut} className={$.btnHeader}>
-						Sign out
+						Sign out <IconLogout style={{ width: "18px" }} />
 					</button>
 				</header>
 				<Modal
@@ -285,6 +343,84 @@ const Manage = () => {
 						</button>
 					</div>
 				</Modal>
+				<Modal
+					opened={userModalOpened}
+					onClose={closeUserModal}
+					title="Create new User"
+					overlayProps={{
+						backgroundOpacity: 0.55,
+						blur: 3,
+					}}
+					scrollAreaComponent={ScrollArea.Autosize}
+					className={$.modal}
+				>
+					<form onSubmit={handleUserSubmit} className={$.formContainer}>
+						<div className={$.formRow}>
+							<label htmlFor="username">Username</label>
+							<input
+								type="text"
+								id="username"
+								placeholder="Username"
+								value={newUser.username}
+								onChange={(e) =>
+									setNewUser({ ...newUser, username: e.target.value })
+								}
+								required
+							/>
+						</div>
+						<div className={$.formRow}>
+							<label htmlFor="password">Password</label>
+							<input
+								type="password"
+								id="password"
+								placeholder="Password"
+								value={newUser.password}
+								onChange={(e) =>
+									setNewUser({ ...newUser, password: e.target.value })
+								}
+								required
+							/>
+						</div>
+						<div className={$.formRow}>
+							<label htmlFor="firstName">First Name</label>
+							<input
+								type="text"
+								id="firstName"
+								placeholder="First Name"
+								value={newUser.firstName}
+								onChange={(e) =>
+									setNewUser({ ...newUser, firstName: e.target.value })
+								}
+								required
+							/>
+						</div>
+						<div className={$.formRow}>
+							<label htmlFor="lastName">Last Name</label>
+							<input
+								type="text"
+								id="lastName"
+								placeholder="Last Name"
+								value={newUser.lastName}
+								onChange={(e) =>
+									setNewUser({ ...newUser, lastName: e.target.value })
+								}
+								required
+							/>
+						</div>
+						<div className={$.formActions}>
+							<button
+								type="button"
+								onClick={closeUserModal}
+								className={clsx([$.btnClose, $.btn])}
+							>
+								Close
+							</button>
+							<button type="submit" className={clsx([$.btnCreate, $.btn])}>
+								Create
+							</button>
+						</div>
+					</form>
+				</Modal>
 				<div className={$.contentWrapper}>
 					<div className={$.list}>
 						<div className={$.listHeader}>
@@ -295,73 +431,14 @@ const Manage = () => {
 									className={$.btnCreatePrompt}
 									onClick={open}
 								>
-									<PlusIcon />
+									<IconSquareRoundedPlus
+										style={{ width: "48px" }}
+										color="green"
+									/>
 								</button>
 							</Tooltip>
 						</div>
 						<div className={$.listWrapper}>
-							{/* <ul>
-								<li className={$.listItem}>
-									<div className={$.listItemContent}>
-										<strong>Commit</strong>
-										<p>
-											Translate the following GitHub commit message from English
-											to Japanese, ensuring that IT and technical terms are
-											accurately translated and understandable for a Japanese
-											developer. The translation should be clear, concise, and
-											maintain the original intent and technical accuracy of the
-											commit message. Use appropriate Japanese technical
-											terminology and context. Here is the commit message:
-										</p>
-									</div>
-									<div className={$.listActions}>
-										<Tooltip label="Edit Prompt">
-											<button type="button" className={$.icon}>
-												<EditIcon />
-											</button>
-										</Tooltip>
-										<Tooltip label="Delete Prompt">
-											<button type="button" className={$.icon}>
-												<DeleteIcon className={$.deleteIcon} />
-											</button>
-										</Tooltip>
-									</div>
-								</li>
-								<li className={$.listItem}>
-									<div className={$.listItemContent}>
-										<strong>Task description</strong>
-										<p>
-											Translate the following Jira task description from English
-											to Japanese, ensuring that IT and technical terms are
-											accurately translated and understandable for a Japanese
-											developer. The translation should be clear, concise, and
-											maintain the original intent and technical accuracy of the
-											task description. Use appropriate Japanese technical
-											terminology and context.
-										</p>
-									</div>
-									<div className={$.listActions}>
-										<Tooltip label="Edit Prompt">
-											<button
-												type="button"
-												className={$.icon}
-												onClick={editOpen}
-											>
-												<EditIcon />
-											</button>
-										</Tooltip>
-										<Tooltip label="Delete Prompt">
-											<button
-												type="button"
-												className={$.icon}
-												onClick={deleteOpen}
-											>
-												<DeleteIcon className={$.deleteIcon} />
-											</button>
-										</Tooltip>
-									</div>
-								</li>
-							</ul> */}
 							<ul>
 								{prompts.length !== 0
 									? prompts.prompts.map((prompt) => (
@@ -393,6 +470,39 @@ const Manage = () => {
 											</li>
 										))
 									: "Loading"}
+							</ul>
+						</div>
+					</div>
+					<div className={clsx([$.list, $.listUsers])}>
+						<div className={$.listHeader}>
+							<h2>List of Users</h2>
+							<Tooltip label="Create User">
+								<button
+									type="button"
+									className={$.btnCreatePrompt}
+									onClick={openUserModal}
+								>
+									<IconUserPlus style={{ width: "48px" }} color="green" />
+								</button>
+							</Tooltip>
+						</div>
+						<div className={$.listWrapper}>
+							<ul>
+								{users.map((user) => (
+									<li key={user.id} className={$.listItem}>
+										<div className={$.listItemContent}>
+											<div>
+												Username: <strong>{user.username}</strong>
+											</div>
+											<div>
+												First Name: <strong>{user.firstName}</strong>
+											</div>
+											<div>
+												Last Name: <strong>{user.lastName}</strong>
+											</div>
+										</div>
+									</li>
+								))}
 							</ul>
 						</div>
 					</div>
@@ -429,6 +539,17 @@ const Manage = () => {
 					color="green"
 				>
 					Prompt was successfully delete
+				</Notification>
+			)}
+			{userNotificationIsOpened && (
+				<Notification
+					title="Success!"
+					classNames={{
+						root: $.notification,
+					}}
+					color="green"
+				>
+					User was successfully created
 				</Notification>
 			)}
 		</MantineProvider>

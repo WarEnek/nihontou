@@ -34,8 +34,6 @@ export const apiService = {
 
 	login: async (data) => {
 		const response = await api.put("/api/Authentication", data);
-		// Обратите внимание, что мы не сохраняем токен здесь.
-		// Это делается в компоненте Login после успешного входа.
 		return response.data;
 	},
 
@@ -66,13 +64,29 @@ export const apiService = {
 	},
 
 	// User
-	getUser: async () => {
+	getAllUsers: async () => {
+		const response = await api.get("/api/User/all");
+		return response.data;
+	},
+
+	getCurrentUser: async () => {
 		const response = await api.get("/api/User");
 		return response.data;
 	},
 
 	updateUser: async (data) => {
 		const response = await api.put("/api/User", data);
+		return response.data;
+	},
+
+	// Users
+	getUserById: async (id) => {
+		const response = await api.get(`/api/Users/${id}`);
+		return response.data;
+	},
+
+	getUsers: async () => {
+		const response = await api.get("/api/Users");
 		return response.data;
 	},
 };

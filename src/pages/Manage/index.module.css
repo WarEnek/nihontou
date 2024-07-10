@@ -3,10 +3,7 @@
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: 80px auto;
-  height: 100vh;
-  /* grid-template-areas:
-    'header'
-    'sidebar content'; */
+  min-height: 100vh;
 }
 
 header {
@@ -103,6 +100,8 @@ header {
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
+  gap: 48px;
 }
 
 .list {
@@ -141,7 +140,15 @@ header {
     background-position: center;
   }
 }
-
+.listUsers:after {
+  background: transparent url('../../assets/few-shibas.svg');
+  left: -100px;
+}
+.listUsers ul {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
 .listItem {
   all: unset;
   display: flex;
@@ -213,15 +220,13 @@ header {
 
 .btnCreatePrompt {
   all: unset;
-
   svg {
-    width: 24px;
-    height: 24px;
+    transition: .2s all;
   }
 
   &:hover {
     svg {
-      transfom: scale(1.1);
+      transform: scale(1.2);
     }
   }
 }
@@ -235,7 +240,10 @@ header {
   padding: 6px 12px;
   border-radius: 6px;
   transition: 0.2s all;
-
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  
   &:hover {
     background: #80c4e9;
     color: #fff;
@@ -246,11 +254,16 @@ header {
   display: flex;
   gap: 24px;
   place-self: flex-end;
+  display: flex;
+  gap: 6px;
   padding-bottom: 8px;
+  transition: 0.2s all;
 
   a {
     padding: 6px 12px;
     border-radius: 6px;
+    display: flex;
+    gap: 6px;
     transition: 0.2s all;
   }
 
@@ -285,5 +298,23 @@ header {
     flex-direction: column;
     align-items: stretch;
     align-content: center;
+  }
+  .list:after {
+    right: 10px;
+    bottom: -50px;
+    width: 70px;
+    height: 70px;
+    z-index: 1;
+  }
+  .listUsers:after {
+    left: 10px;
+  }
+  .listActions {
+    opacity: 1;
+    transform: none;
+    position: relative;
+  }
+  .listItem {
+    justify-content: space-between;
   }
 }

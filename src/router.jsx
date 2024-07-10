@@ -1,7 +1,7 @@
 import { createBrowserRouter, Navigate, Outlet } from "react-router-dom";
 import Login from "./components/Login";
 import Register from "./components/Register";
-import Chat from "./pages/Chat";
+import Translate from "./pages/Translate";
 import Manage from "./pages/Manage";
 
 // Функция для проверки наличия токена
@@ -22,10 +22,10 @@ const ProtectedRoute = () => {
 	return <Outlet />;
 };
 
-// Компонент для публичных маршрутов (перенаправляет на /chat, если пользователь авторизован)
+// Компонент для публичных маршрутов (перенаправляет на /translate, если пользователь авторизован)
 const PublicRoute = ({ element }) => {
 	if (isAuthenticated()) {
-		return <Navigate to="/chat" replace />;
+		return <Navigate to="/translate" replace />;
 	}
 	return element;
 };
@@ -48,8 +48,8 @@ const router = createBrowserRouter([
 		element: <ProtectedRoute />,
 		children: [
 			{
-				path: "chat",
-				element: <Chat />,
+				path: "translate",
+				element: <Translate />,
 			},
 			{
 				path: "manage",

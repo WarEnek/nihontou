@@ -17,7 +17,7 @@ const PromptField = ({ placeholder, left, value, onChange, readOnly }) => {
 					onChange={onChange}
 					readOnly={readOnly}
 				/>
-				{!left && !readOnly && (
+				{!left && (
 					<CopyButton value={value} timeout={2000}>
 						{({ copied, copy }) => (
 							<Tooltip

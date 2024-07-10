@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import $ from "./index.module.css";
 import ShibaIcon from "../../assets/cute-shiba-inu-face.svg?react";
 import { apiService } from "../../api";
+import { IconUser, IconKey } from "@tabler/icons-react";
 import "@mantine/core/styles.css";
 
 const Login = () => {
@@ -35,7 +36,6 @@ const Login = () => {
 
 			successNotificationHandlers.open();
 
-			// Обнуление полей ввода
 			setFormData({
 				username: "",
 				password: "",
@@ -43,9 +43,8 @@ const Login = () => {
 
 			setTimeout(() => {
 				successNotificationHandlers.close();
-				// Перенаправление на страницу /chat
-				navigate("/chat");
-			}, 1500); // Уменьшили время до 1.5 секунд, чтобы пользователь успел увидеть уведомление
+				navigate("/translate");
+			}, 1500);
 		} catch (error) {
 			console.error("Login failed", error);
 			setErrorMessage(
@@ -66,22 +65,36 @@ const Login = () => {
 						<ShibaIcon />
 					</div>
 					<form onSubmit={handleSubmit} className={$.form}>
-						<input
-							type="text"
-							name="username"
-							placeholder="Username"
-							value={formData.username}
-							onChange={handleChange}
-							required
-						/>
-						<input
-							type="password"
-							name="password"
-							placeholder="Password"
-							value={formData.password}
-							onChange={handleChange}
-							required
-						/>
+						<div className={$.formGroup}>
+							<input
+								type="text"
+								name="username"
+								placeholder="Username"
+								value={formData.username}
+								onChange={handleChange}
+								required
+							/>
+							<IconUser
+								style={{ width: "24px" }}
+								color="gray"
+								className={$.icon}
+							/>
+						</div>
+						<div className={$.formGroup}>
+							<input
+								type="password"
+								name="password"
+								placeholder="Password"
+								value={formData.password}
+								onChange={handleChange}
+								required
+							/>
+							<IconKey
+								style={{ width: "24px" }}
+								color="gray"
+								className={$.icon}
+							/>
+						</div>
 						<button type="submit">Sign In</button>
 					</form>
 				</div>
