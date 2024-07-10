@@ -93,13 +93,26 @@ header {
   }
 }
 
+.middle {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
 .select {
   width: 200px;
-  background: #fff;
   border-radius: 6px;
   color: #292c32;
   display: flex;
+  flex-direction: column;
   padding: 12px;
+
+  label {
+    font-size: 0.8rem;
+    font-weight: 500;
+    margin-bottom: 3px;
+    color: #292c32;
+  }
 
   &:focus {
     outline: 0;
@@ -112,4 +125,62 @@ header {
   height: 50px;
   background-size: contain;
   background-position: center;
+}
+
+.nav {
+  display: flex;
+  gap: 24px;
+  place-self: flex-end;
+  padding-bottom: 13px;
+
+  a {
+    padding: 6px 12px;
+    border-radius: 6px;
+    transition: 0.2s all;
+  }
+
+  a:hover {
+    background: #80c4e9;
+    color: #fff;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  header {
+    flex-direction: column;
+  }
+  .middle {
+    flex-direction: column;
+    gap: 3px;
+  }
+  .nav {
+    padding-bottom: 0;
+    place-self: center;
+  }
+  .chatContainer {
+    flex-direction: column;
+  }
+  .btn {
+    height: 48px;
+    max-height: none;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    margin: 4px 0;
+    background: transparent;
+    border: 2px solid #ff7f3e;
+    border-radius: 6px;
+    padding: 6px;
+
+    .shiba {
+      width: 40px;
+      height: 40px;
+    }
+  }
+  .container {
+    grid-template-rows: auto;
+    height: auto;
+  }
 }

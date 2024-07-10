@@ -1,32 +1,78 @@
-import axios from 'axios';
+import axios from "axios";
 
-const API_BASE_URL = '/api';
+const API_BASE_URL = "/api";
+
 const api = axios.create({
-  baseURL: API_BASE_URL,
+	baseURL: "http://localhost:8083",
 });
 
+// Функция для получения токена из localStorage
+const getToken = () => {
+	return localStorage.getItem("token");
+};
+
+// Добавляем интерцептор для установки токена в заголовок каждого запроса
+api.interceptors.request.use(
+	(config) => {
+		const token = getToken();
+		if (token) {
+			config.headers["Authorization"] = `Bearer ${token}`;
+		}
+		return config;
+	},
+	(error) => {
+		return Promise.reject(error);
+	},
+);
+
 export const apiService = {
-  processText: async (data) => {
-    const response = await api.post('/api/ProcessedText', data);
-    return response.data;
-  },
+	// Authentication
+	register: async (data) => {
+		const response = await api.post("/api/Authentication", data);
+		return response.data;
+	},
 
-  getAllPrompts: async () => {
-    const response = await api.get('/api/Prompts');
-    return response.data;
-  },
+	login: async (data) => {
+		const response = await api.put("/api/Authentication", data);
+		// Обратите внимание, что мы не сохраняем токен здесь.
+		// Это делается в компоненте Login после успешного входа.
+		return response.data;
+	},
 
-  createPrompt: async (data) => {
-    const response = await api.post('/api/Prompts', data);
-    return response.data;
-  },
+	// ProcessedText
+	processText: async (data) => {
+		const response = await api.post("/api/ProcessedText", data);
+		return response.data;
+	},
 
-  updatePrompt: async (id, data) => {
-    const response = await api.put(`/api/Prompts/${id}`, data);
-    return response.data;
-  },
+	// Prompts
+	getAllPrompts: async () => {
+		const response = await api.get("/api/Prompts");
+		return response.data;
+	},
 
-  deletePrompt: async (id) => {
-    await api.delete(`/api/Prompts/${id}`);
-  },
+	createPrompt: async (data) => {
+		const response = await api.post("/api/Prompts", data);
+		return response.data;
+	},
+
+	updatePrompt: async (id, data) => {
+		const response = await api.put(`/api/Prompts/${id}`, data);
+		return response.data;
+	},
+
+	deletePrompt: async (id) => {
+		await api.delete(`/api/Prompts/${id}`);
+	},
+
+	// User
+	getUser: async () => {
+		const response = await api.get("/api/User");
+		return response.data;
+	},
+
+	updateUser: async (data) => {
+		const response = await api.put("/api/User", data);
+		return response.data;
+	},
 };

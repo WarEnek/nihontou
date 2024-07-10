@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import clsx from "clsx";
 import { MantineProvider } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
@@ -5,11 +6,20 @@ import { Modal, ScrollArea, Notification, Tooltip } from "@mantine/core";
 import EditIcon from "../../assets/edit.svg?react";
 import DeleteIcon from "../../assets/delete.svg?react";
 import PlusIcon from "../../assets/plus.svg?react";
-import "@mantine/core/styles.css";
+import { apiService } from "../../api"; // Импортируем apiService
 
+import "@mantine/core/styles.css";
 import $ from "./index.module.css";
 
 const Manage = () => {
+	const [newPrompt, setNewPrompt] = useState({ title: "", content: "" });
+	const [prompts, setPrompts] = useState([]);
+	const [loading, setLoading] = useState(true); // Add loading state
+	const [error, setError] = useState(null); // Add error state
+
+	const [editingPrompt, setEditingPrompt] = useState(null);
+	const [deletingPromptId, setDeletingPromptId] = useState(null);
+
 	const [opened, { open, close }] = useDisclosure(false);
 	const [editOpened, { open: editOpen, close: editClose }] =
 		useDisclosure(false);
@@ -20,6 +30,29 @@ const Manage = () => {
 		useDisclosure(false);
 	const [notificationDeleteIsOpened, notificationDeleteHandlers] =
 		useDisclosure(false);
+
+	useEffect(() => {
+		fetchPrompts();
+	}, []);
+
+	const fetchPrompts = async () => {
+		setLoading(true);
+		setError(null);
+		try {
+			const fetchedPrompts = await apiService.getAllPrompts();
+			setPrompts(fetchedPrompts);
+		} catch (error) {
+			console.error("Failed to fetch prompts:", error);
+			setError("Failed to fetch prompts");
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	const handleInputChange = (e) => {
+		const { id, value } = e.target;
+		setNewPrompt((prev) => ({ ...prev, [id]: value }));
+	};
 
 	const createPrompt = () => {
 		notificationHandlers.open();
@@ -46,6 +79,54 @@ const Manage = () => {
 		}, 3000);
 	};
 
+	const handleSubmit = async (e) => {
+		e.preventDefault();
+		try {
+			await apiService.createPrompt(newPrompt);
+			createPrompt();
+			setNewPrompt({ title: "", content: "" });
+			fetchPrompts(); // Обновляем список промптов после создания
+		} catch (error) {
+			console.error("Failed to create prompt:", error);
+			// Здесь можно добавить обработку ошибки, например, показать уведомление об ошибке
+		}
+	};
+
+	const handleEdit = (prompt) => {
+		setEditingPrompt(prompt);
+		editOpen();
+	};
+
+	const handleEditSubmit = async (e) => {
+		e.preventDefault();
+		try {
+			await apiService.updatePrompt(editingPrompt.id, editingPrompt);
+			savePrompt();
+			setEditingPrompt(null);
+			fetchPrompts(); // Обновляем список промптов после редактирования
+		} catch (error) {
+			console.error("Failed to update prompt:", error);
+			// Здесь можно добавить обработку ошибки
+		}
+	};
+
+	const handleDelete = (id) => {
+		setDeletingPromptId(id);
+		deleteOpen();
+	};
+
+	const confirmDelete = async () => {
+		try {
+			await apiService.deletePrompt(deletingPromptId);
+			deletePrompt();
+			setDeletingPromptId(null);
+			fetchPrompts(); // Обновляем список промптов после удаления
+		} catch (error) {
+			console.error("Failed to delete prompt:", error);
+			// Здесь можно добавить обработку ошибки
+		}
+	};
+
 	return (
 		<MantineProvider>
 			<div className={$.container}>
@@ -64,14 +145,27 @@ const Manage = () => {
 					scrollAreaComponent={ScrollArea.Autosize}
 					className={$.modal}
 				>
-					<div className={$.formContainer}>
+					<form onSubmit={handleSubmit} className={$.formContainer}>
 						<div className={$.formRow}>
 							<label htmlFor="title">Title</label>
-							<input type="text" id="title" placeholder="Title of Prompt" />
+							<input
+								type="text"
+								id="title"
+								placeholder="Title of Prompt"
+								value={newPrompt.title}
+								onChange={handleInputChange}
+								required
+							/>
 						</div>
 						<div className={$.formRow}>
-							<label htmlFor="title">Prompt</label>
-							<textarea id="prompt" placeholder="Prompt" />
+							<label htmlFor="prompt">Prompt</label>
+							<textarea
+								id="content"
+								placeholder="Prompt"
+								value={newPrompt.content}
+								onChange={handleInputChange}
+								required
+							/>
 						</div>
 						<div className={$.formActions}>
 							<button
@@ -81,15 +175,11 @@ const Manage = () => {
 							>
 								Close
 							</button>
-							<button
-								type="button"
-								className={clsx([$.btnCreate, $.btn])}
-								onClick={() => createPrompt()}
-							>
+							<button type="submit" className={clsx([$.btnCreate, $.btn])}>
 								Create
 							</button>
 						</div>
-					</div>
+					</form>
 				</Modal>
 				<Modal
 					opened={editOpened}
@@ -102,47 +192,45 @@ const Manage = () => {
 					scrollAreaComponent={ScrollArea.Autosize}
 					className={$.modal}
 				>
-					<div className={$.formContainer}>
+					<form onSubmit={handleEditSubmit} className={$.formContainer}>
 						<div className={$.formRow}>
-							<label htmlFor="title">Title</label>
+							<label htmlFor="editTitle">Title</label>
 							<input
 								type="text"
-								id="title"
+								id="editTitle"
 								placeholder="Title of Prompt"
-								value="Commit"
+								value={editingPrompt?.title || ""}
+								onChange={(e) =>
+									setEditingPrompt({ ...editingPrompt, title: e.target.value })
+								}
+								required
 							/>
 						</div>
 						<div className={$.formRow}>
-							<label htmlFor="title">Prompt</label>
+							<label htmlFor="editPrompt">Prompt</label>
 							<textarea
-								id="prompt"
+								id="editPrompt"
 								placeholder="Prompt"
-								value="Translate the following GitHub commit message from English
-											to Japanese, ensuring that IT and technical terms are
-											accurately translated and understandable for a Japanese
-											developer. The translation should be clear, concise, and
-											maintain the original intent and technical accuracy of the
-											commit message. Use appropriate Japanese technical
-											terminology and context. Here is the commit message:"
+								value={editingPrompt?.content || ""}
+								onChange={(e) =>
+									setEditingPrompt({ ...editingPrompt, content: e.target.value })
+								}
+								required
 							/>
 						</div>
 						<div className={$.formActions}>
 							<button
 								type="button"
-								onClick={close}
+								onClick={editClose}
 								className={clsx([$.btnClose, $.btn])}
 							>
 								Close
 							</button>
-							<button
-								type="button"
-								className={clsx([$.btnCreate, $.btn])}
-								onClick={() => savePrompt()}
-							>
+							<button type="submit" className={clsx([$.btnCreate, $.btn])}>
 								Save
 							</button>
 						</div>
-					</div>
+					</form>
 				</Modal>
 				<Modal
 					opened={deleteOpened}
@@ -162,7 +250,7 @@ const Manage = () => {
 					<div className={$.formActions}>
 						<button
 							type="button"
-							onClick={close}
+							onClick={deleteClose}
 							className={clsx([$.btnClose, $.btn])}
 						>
 							Close
@@ -170,7 +258,7 @@ const Manage = () => {
 						<button
 							type="button"
 							className={clsx([$.btnDelete, $.btn])}
-							onClick={() => deletePrompt()}
+							onClick={confirmDelete}
 						>
 							Delete
 						</button>
@@ -191,7 +279,7 @@ const Manage = () => {
 							</Tooltip>
 						</div>
 						<div className={$.listWrapper}>
-							<ul>
+							{/* <ul>
 								<li className={$.listItem}>
 									<div className={$.listItemContent}>
 										<strong>Commit</strong>
@@ -252,6 +340,38 @@ const Manage = () => {
 										</Tooltip>
 									</div>
 								</li>
+							</ul> */}
+							<ul>
+								{prompts.length !== 0
+									? prompts.prompts.map((prompt) => (
+											<li key={prompt.id} className={$.listItem}>
+												<div className={$.listItemContent}>
+													<strong>{prompt.title}</strong>
+													<p>{prompt.content}</p>
+												</div>
+												<div className={$.listActions}>
+													<Tooltip label="Edit Prompt">
+														<button
+															type="button"
+															className={$.icon}
+															onClick={() => handleEdit(prompt)}
+														>
+															<EditIcon />
+														</button>
+													</Tooltip>
+													<Tooltip label="Delete Prompt">
+														<button
+															type="button"
+															className={$.icon}
+															onClick={() => handleDelete(prompt.id)}
+														>
+															<DeleteIcon className={$.deleteIcon} />
+														</button>
+													</Tooltip>
+												</div>
+											</li>
+										))
+									: "Loading"}
 							</ul>
 						</div>
 					</div>

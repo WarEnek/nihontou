@@ -5,7 +5,7 @@ import { IconCopy, IconCheck } from "@tabler/icons-react";
 
 import $ from "./index.module.css";
 
-const PromptField = ({ placeholder, left }) => {
+const PromptField = ({ placeholder, left, value, onChange, readOnly }) => {
 	return (
 		<MantineProvider>
 			<div className={$.container}>
@@ -13,9 +13,12 @@ const PromptField = ({ placeholder, left }) => {
 					className={clsx($.input, left && $.left)}
 					name="postContent"
 					placeholder={placeholder}
+					value={value}
+					onChange={onChange}
+					readOnly={readOnly}
 				/>
-				{!left && (
-					<CopyButton value="https://mantine.dev" timeout={2000}>
+				{!left && !readOnly && (
+					<CopyButton value={value} timeout={2000}>
 						{({ copied, copy }) => (
 							<Tooltip
 								label={copied ? "Copied" : "Copy"}

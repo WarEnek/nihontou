@@ -32,3 +32,18 @@
   right: 42px;
   top: 16px;
 }
+
+@media screen and (max-width: 768px) {
+  .input {
+    font-size: 0.9rem;
+    padding: 8px;
+    border-radius: 6px;
+    height: auto;
+    resize: vertical;
+    min-height: 100px;
+
+    &.left {
+      border-radius: 6px;
+    }
+  }
+}

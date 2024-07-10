@@ -25,6 +25,7 @@ header {
   background: #fff;
   border-radius: 6px;
   color: #292c32;
+  cursor: pointer;
 }
 
 .modal h2 {
@@ -70,6 +71,7 @@ header {
   border-radius: 6px;
   padding: 6px 8px;
   font-weight: normal;
+  cursor: pointer;
 
   &:hover,
   &:focus {
@@ -107,6 +109,7 @@ header {
   display: flex;
   flex-direction: column;
   max-width: 600px;
+  width: 100%;
   background: #fff;
   border-radius: 6px;
   color: #292c32;
