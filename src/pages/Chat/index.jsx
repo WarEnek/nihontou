@@ -73,7 +73,6 @@ const Chat = () => {
 						{prompts.length !== 0 && (
 							<Select
 								label="Select prompt"
-								labelPosition="top"
 								className={$.select}
 								placeholder="Pick value"
 								value={promptType}

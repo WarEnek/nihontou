@@ -242,6 +242,29 @@ header {
   }
 }
 
+.nav {
+  display: flex;
+  gap: 24px;
+  place-self: flex-end;
+  padding-bottom: 8px;
+
+  a {
+    padding: 6px 12px;
+    border-radius: 6px;
+    transition: 0.2s all;
+  }
+
+  a:hover {
+    background: #80c4e9;
+    color: #fff;
+  }
+}
+.middle {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
 @media screen and (max-width: 768px) {
   header {
     flex-direction: column;

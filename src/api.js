@@ -3,7 +3,7 @@ import axios from "axios";
 const API_BASE_URL = "/api";
 
 const api = axios.create({
-	baseURL: "http://localhost:8083",
+	baseURL: "http://172.17.0.1:8083",
 });
 
 // Функция для получения токена из localStorage
