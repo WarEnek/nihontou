@@ -3,6 +3,7 @@ import clsx from "clsx";
 import { MantineProvider } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { Modal, ScrollArea, Notification, Tooltip } from "@mantine/core";
+import { useNavigate } from "react-router-dom";
 import EditIcon from "../../assets/edit.svg?react";
 import DeleteIcon from "../../assets/delete.svg?react";
 import PlusIcon from "../../assets/plus.svg?react";
@@ -30,6 +31,7 @@ const Manage = () => {
 		useDisclosure(false);
 	const [notificationDeleteIsOpened, notificationDeleteHandlers] =
 		useDisclosure(false);
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		fetchPrompts();
@@ -127,12 +129,28 @@ const Manage = () => {
 		}
 	};
 
+	const handleSignOut = () => {
+		// Удаление всех данных авторизации из localStorage
+		localStorage.removeItem("token");
+		localStorage.removeItem("tokenExpireDate");
+		// Перенаправление на страницу входа
+		navigate("/login");
+	};
+
 	return (
 		<MantineProvider>
 			<div className={$.container}>
 				<header>
 					<div className={$.logo} />
-					<a href="#">Sign out</a>
+					<div className={$.middle}>
+						<nav className={$.nav}>
+							<a href="/chat">Chat</a>
+							<a href="/manage">Manage</a>
+						</nav>
+					</div>
+					<button type="button" onClick={handleSignOut} className={$.btnHeader}>
+						Sign out
+					</button>
 				</header>
 				<Modal
 					opened={opened}
@@ -213,7 +231,10 @@ const Manage = () => {
 								placeholder="Prompt"
 								value={editingPrompt?.content || ""}
 								onChange={(e) =>
-									setEditingPrompt({ ...editingPrompt, content: e.target.value })
+									setEditingPrompt({
+										...editingPrompt,
+										content: e.target.value,
+									})
 								}
 								required
 							/>

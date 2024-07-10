@@ -129,7 +129,6 @@ header {
     gap: 16px;
   }
 
-
   &:after {
     content: '';
     position: absolute;
@@ -224,5 +223,44 @@ header {
     svg {
       transfom: scale(1.1);
     }
+  }
+}
+
+.btnHeader {
+  all: unset;
+  background: transparent;
+  color: #646cff;
+  font-weight: 450;
+  cursor: pointer;
+  padding: 6px 12px;
+  border-radius: 6px;
+  transition: 0.2s all;
+
+  &:hover {
+    background: #80c4e9;
+    color: #fff;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  header {
+    flex-direction: column;
+    margin: 0;
+  }
+  .middle {
+    flex-direction: column;
+    gap: 3px;
+  }
+  .nav {
+    padding-bottom: 0;
+    place-self: center;
+  }
+  .container {
+    grid-template-rows: auto;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    align-content: center;
   }
 }

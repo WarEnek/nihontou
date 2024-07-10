@@ -1,115 +1,117 @@
-import { MantineProvider, Select } from "@mantine/core";
-import clsx from "clsx";
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { MantineProvider, Notification } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 import { useNavigate } from "react-router-dom";
-import PromptField from "../../components/PromptField";
 import $ from "./index.module.css";
+import ShibaIcon from "../../assets/cute-shiba-inu-face.svg?react";
 import { apiService } from "../../api";
+import "@mantine/core/styles.css";
 
-const Chat = () => {
-  const [loading, setLoading] = useState(false);
-  const [inputText, setInputText] = useState("");
-  const [outputText, setOutputText] = useState("");
-  const [promptType, setPromptType] = useState("");
-  const [prompts, setPrompts] = useState([]);
-  const navigate = useNavigate();
+const Login = () => {
+	const [formData, setFormData] = useState({
+		username: "",
+		password: "",
+	});
+	const [successNotificationOpened, successNotificationHandlers] =
+		useDisclosure(false);
+	const [errorNotificationOpened, errorNotificationHandlers] =
+		useDisclosure(false);
+	const [errorMessage, setErrorMessage] = useState("");
+	const navigate = useNavigate();
 
-  useEffect(() => {
-    fetchPrompts();
-  }, []);
+	const handleChange = (e) => {
+		setFormData({ ...formData, [e.target.name]: e.target.value });
+	};
 
-  const fetchPrompts = async () => {
-    try {
-      const fetchedPrompts = await apiService.getAllPrompts();
-      setPrompts(fetchedPrompts);
-      if (fetchedPrompts.prompts.length > 0) {
-        setPromptType(fetchedPrompts.prompts[0].id);
-      }
-    } catch (error) {
-      console.error("Failed to fetch prompts", error);
-    }
-  };
+	const handleSubmit = async (e) => {
+		e.preventDefault();
+		try {
+			const response = await apiService.login(formData);
+			console.log("Login successful", response);
 
-  const process = async () => {
-    setLoading(true);
-    try {
-      const response = await apiService.processText({
-        text: inputText,
-        promptId: promptType,
-      });
-      setOutputText(response.processedText);
-    } catch (error) {
-      console.error("Processing failed", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+			// Сохранение токена в localStorage
+			localStorage.setItem("token", response.token);
+			localStorage.setItem("tokenExpireDate", response.expireDate);
 
-  const handleSignOut = () => {
-    // Удаление всех данных авторизации из localStorage
-    localStorage.removeItem("token");
-    localStorage.removeItem("tokenExpireDate");
-    
-    // Очистка состояния приложения
-    setInputText("");
-    setOutputText("");
-    setPromptType("");
-    setPrompts([]);
+			successNotificationHandlers.open();
 
-    // Перенаправление на страницу входа
-    navigate("/login");
-  };
+			// Обнуление полей ввода
+			setFormData({
+				username: "",
+				password: "",
+			});
 
-  return (
-    <MantineProvider>
-      <div className={$.container}>
-        <header>
-          <div className={$.logo} />
-          <div className={$.middle}>
-            <nav className={$.nav}>
-              <a href="/chat">Chat</a>
-              <a href="/manage">Manage</a>
-            </nav>
-            {prompts.length !== 0 && (
-              <Select
-                label="Select prompt"
-                labelPosition="top"
-                className={$.select}
-                placeholder="Pick value"
-                value={promptType}
-                onChange={setPromptType}
-                data={prompts.prompts.map((prompt) => ({
-                  value: prompt.id,
-                  label: prompt.title,
-                }))}
-              />
-            )}
-          </div>
-          <a href="#" onClick={handleSignOut}>
-            Sign out
-          </a>
-        </header>
-        <div className={$.chatContainer}>
-          <PromptField
-            placeholder="Type something interesting"
-            left
-            value={inputText}
-            onChange={(e) => setInputText(e.target.value)}
-          />
-          <button
-            type="submit"
-            className={clsx($.btn, loading && $.isLoading)}
-            onClick={process}
-            disabled={loading}
-          >
-            <span className={$.textInBtn}>Translate</span>
-            <div className={$.shiba} />
-          </button>
-          <PromptField value={outputText} readOnly />
-        </div>
-      </div>
-    </MantineProvider>
-  );
+			setTimeout(() => {
+				successNotificationHandlers.close();
+				// Перенаправление на страницу /chat
+				navigate("/chat");
+			}, 1500); // Уменьшили время до 1.5 секунд, чтобы пользователь успел увидеть уведомление
+		} catch (error) {
+			console.error("Login failed", error);
+			setErrorMessage(
+				error.response?.data?.message || "Login failed. Please try again.",
+			);
+			errorNotificationHandlers.open();
+			setTimeout(() => {
+				errorNotificationHandlers.close();
+			}, 3000);
+		}
+	};
+
+	return (
+		<MantineProvider>
+			<div className={$.container}>
+				<div className={$.box}>
+					<div className={$.shiba}>
+						<ShibaIcon />
+					</div>
+					<form onSubmit={handleSubmit} className={$.form}>
+						<input
+							type="text"
+							name="username"
+							placeholder="Username"
+							value={formData.username}
+							onChange={handleChange}
+							required
+						/>
+						<input
+							type="password"
+							name="password"
+							placeholder="Password"
+							value={formData.password}
+							onChange={handleChange}
+							required
+						/>
+						<button type="submit">Sign In</button>
+					</form>
+				</div>
+				{successNotificationOpened && (
+					<Notification
+						title="Success!"
+						classNames={{
+							root: $.notification,
+						}}
+						color="green"
+						onClose={successNotificationHandlers.close}
+					>
+						Login was successful. Redirecting to chat...
+					</Notification>
+				)}
+				{errorNotificationOpened && (
+					<Notification
+						title="Error!"
+						classNames={{
+							root: $.notification,
+						}}
+						color="red"
+						onClose={errorNotificationHandlers.close}
+					>
+						{errorMessage}
+					</Notification>
+				)}
+			</div>
+		</MantineProvider>
+	);
 };
 
-export default Chat;
+export default Login;

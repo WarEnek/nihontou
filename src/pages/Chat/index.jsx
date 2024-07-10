@@ -85,7 +85,7 @@ const Chat = () => {
 							/>
 						)}
 					</div>
-					<button type="button" onClick={handleSignOut}>
+					<button type="button" onClick={handleSignOut} className={$.btnHeader}>
 						Sign out
 					</button>
 				</header>
