@@ -6,7 +6,7 @@ console.log(process.env);
 console.log(process.env.API_BASE_ADDRESS);
 
 const api = axios.create({
-	baseURL: process.env.API_BASE_ADDRESS,
+	baseURL: import.meta.env.API_BASE_ADDRESS,
 });
 
 // Функция для получения токена из localStorage
