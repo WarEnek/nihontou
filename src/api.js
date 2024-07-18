@@ -2,8 +2,7 @@ import axios from "axios";
 
 const API_BASE_URL = "/api";
 
-console.log(process.env);
-console.log(process.env.API_BASE_ADDRESS);
+console.log(import.meta.env.API_BASE_ADDRESS);
 
 const api = axios.create({
 	baseURL: import.meta.env.API_BASE_ADDRESS,
