@@ -2,10 +2,10 @@ import axios from "axios";
 
 const API_BASE_URL = "/api";
 
-console.log(import.meta.env.API_BASE_ADDRESS);
+console.log(import.meta.env.VITE_API_BASE_ADDRESS);
 
 const api = axios.create({
-	baseURL: import.meta.env.API_BASE_ADDRESS,
+	baseURL: import.meta.env.VITE_API_BASE_ADDRESS,
 });
 
 // Функция для получения токена из localStorage
